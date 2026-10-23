@@ -311,33 +311,43 @@ if (
 ) {
   window.__deeptracePracticeScore = S.practice.score;
 };
-  return `<main class="container"><div class="overline">DEEPTRACE AWARENESS LAB</div><h1 class="pagetitle">Phòng thực hành: Kiểm tra kiến thức tình huống</h1><p class="muted">20 tình huống thực tế về nhận diện Deepfake, kiểm chứng thông tin và lựa chọn cách ứng phó an toàn. Chọn một đáp án cho mỗi câu rồi nộp bài để xem điểm và giải thích.</p><div class="bodypanel"><div class="resultgrid"><div class="metric"><strong>${cases.length}</strong><small>Câu hỏi tình huống</small></div><div class="metric"><strong>${Object.keys(saved).length}/${cases.length}</strong><small>Đã trả lời</small></div><div class="metric"><strong>${window.__deeptracePracticeScore ?? "—"}</strong><small>Điểm gần nhất / ${cases.length}</small></div></div>${cases.map((q, i) => `<div class="question"><h3>Câu ${i + 1}. ${esc(q[0])}</h3>${q[1].map((a, j) => `<label class="option"><input type="radio" name="practice${i}" value="${j}" ${saved[i] === j ? "checked" : ""} onchange="window.__deeptracePracticeAnswers[${i}]=${j}"> ${String.fromCharCode(65 + j)}. ${esc(a)}</label>`).join("")}${window.__deeptracePracticeSubmitted ? `<div class="notice ${saved[i] === q[2] ? "" : "warn"}"><b>${saved[i] === q[2] ? "✓ Đáp án đúng" : "Đáp án đúng: " + String.fromCharCode(65 + q[2])}</b><br>${esc(q[3])}</div>` : ""}</div>`).join("")}<div class="quizfooter"><button class="secondary" onclick="window.__deeptracePracticeAnswers={};window.__deeptracePracticeSubmitted=false;window.__deeptracePracticeScore=null;S.practice=null;save();go('lab')">Làm lại từ đầu</button><button class="primary" onclick="submitPracticeSet()">Nộp bài và xem kết quả →</button></div>${window.__deeptracePracticeSubmitted ? `<div class="takeaway"><b>Kết quả:</b> ${window.__deeptracePracticeScore}/${cases.length} câu đúng (${Math.round((window.__deeptracePracticeScore / cases.length) * 100)}%). Xem phần giải thích ngay dưới từng câu để củng cố kiến thức.</div>` : ""}</div><div class="bodypanel" style="margin-top:20px"><div class="overline">QUY TẮC AN TOÀN</div><h2>Dừng – Xác minh – Hành động</h2><p>Khi gặp nội dung nghi là Deepfake, không vội chia sẻ, chuyển tiền hoặc cung cấp dữ liệu cá nhân. Hãy kiểm tra nguồn, bối cảnh và đối chiếu bằng chứng độc lập trước khi kết luận.</p><button class="secondary" onclick="go('results')">Xem kết quả học tập →</button></div></main>`;
+  return `<main class="container"><div class="overline">DEEPTRACE AWARENESS LAB</div><h1 class="pagetitle">Phòng thực hành: Kiểm tra kiến thức tình huống</h1><p class="muted">20 tình huống thực tế về nhận diện Deepfake, kiểm chứng thông tin và lựa chọn cách ứng phó an toàn. Chọn một đáp án cho mỗi câu rồi nộp bài để xem điểm và giải thích.</p><div class="bodypanel"><div class="resultgrid"><div class="metric"><strong>${cases.length}</strong><small>Câu hỏi tình huống</small></div><div class="metric"><strong>${Object.keys(saved).length}/${cases.length}</strong><small>Đã trả lời</small></div><div class="metric"><strong>${S.practice?.score ?? window.__deeptracePracticeScore ?? "—"}</strong><small>Điểm gần nhất / ${cases.length}</small></div></div>${cases.map((q, i) => `<div class="question"><h3>Câu ${i + 1}. ${esc(q[0])}</h3>${q[1].map((a, j) => `<label class="option"><input type="radio" name="practice${i}" value="${j}" ${saved[i] === j ? "checked" : ""} onchange="window.__deeptracePracticeAnswers[${i}]=${j}"> ${String.fromCharCode(65 + j)}. ${esc(a)}</label>`).join("")}${window.__deeptracePracticeSubmitted ? `<div class="notice ${saved[i] === q[2] ? "" : "warn"}"><b>${saved[i] === q[2] ? "✓ Đáp án đúng" : "Đáp án đúng: " + String.fromCharCode(65 + q[2])}</b><br>${esc(q[3])}</div>` : ""}</div>`).join("")}<div class="quizfooter"><button class="secondary" onclick="window.__deeptracePracticeAnswers={};window.__deeptracePracticeSubmitted=false;window.__deeptracePracticeScore=null;S.practice=null;save();go('lab')">Làm lại từ đầu</button><button class="primary" onclick="submitPracticeSet()">Nộp bài và xem kết quả →</button></div>${window.__deeptracePracticeSubmitted ? `<div class="takeaway"><b>Kết quả:</b> ${S.practice?.score ?? window.__deeptracePracticeScore ?? 0}/${cases.length} câu đúng (${Math.round(((S.practice?.score ?? window.__deeptracePracticeScore ?? 0) / cases.length) * 100)}%). Xem phần giải thích ngay dưới từng câu để củng cố kiến thức.</div>` : ""}</div><div class="bodypanel" style="margin-top:20px"><div class="overline">QUY TẮC AN TOÀN</div><h2>Dừng – Xác minh – Hành động</h2><p>Khi gặp nội dung nghi là Deepfake, không vội chia sẻ, chuyển tiền hoặc cung cấp dữ liệu cá nhân. Hãy kiểm tra nguồn, bối cảnh và đối chiếu bằng chứng độc lập trước khi kết luận.</p><button class="secondary" onclick="go('results')">Xem kết quả học tập →</button></div></main>`;
 }
+
 function submitPracticeSet() {
-  const cases = window.DEEPTRACE_CASES || [],
-    saved =
-      window.__deeptracePracticeAnswers ||
-      (window.__deeptracePracticeAnswers = {});
-  if (Object.keys(saved).length < cases.length) {
-    feedback =
-      '<div class="notice warn">Vui lòng trả lời đủ 20 câu trước khi nộp bài.</div>';
-    window.__deeptracePracticeSubmitted = false;
-    render();
+  const cases = window.DEEPTRACE_CASES || [];
+  const saved = window.__deeptracePracticeAnswers || {};
+
+  // Kiểm tra đã trả lời đủ câu hỏi
+  if (
+    cases.length === 0 ||
+    cases.some((_, i) => saved[i] === undefined)
+  ) {
+    alert("Vui lòng trả lời đầy đủ 20 câu trước khi nộp bài.");
     return;
   }
+
+  // Tính số câu trả lời đúng
+  const score = cases.reduce((total, q, i) => {
+    return total + (Number(saved[i]) === Number(q[2]) ? 1 : 0);
+  }, 0);
+
+  // Cập nhật kết quả hiển thị
+  window.__deeptracePracticeScore = score;
   window.__deeptracePracticeSubmitted = true;
 
-// Lưu kết quả phòng thực hành
-S.practice = {
-  score: window.__deeptracePracticeScore,
-  total: cases.length,
-  answers: { ...saved },
-  submittedAt: new Date().toISOString()
-};
+  // Lưu kết quả vào localStorage
+  S.practice = {
+    score: score,
+    total: cases.length,
+    answers: { ...saved },
+    submittedAt: new Date().toISOString()
+  };
 
-save();
-render();
+  save();
+  render();
 }
+
 
 
 function results() {
