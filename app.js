@@ -52,26 +52,32 @@ function onboarding() {
       </p>
 
       <div class="bodypanel">
-        <h2>Thiết lập mã người tham gia</h2>
+        <h2>Nhập mã số sinh viên</h2>
 
         <p>
           Tiến độ học tập được lưu trên trình duyệt
           đang sử dụng.
         </p>
 
+        
         <label class="small" for="code">
-          Mã người tham gia
+          Mã số sinh viên (MSSV)
         </label>
 
         <p>
           <input
             id="code"
             class="field"
-            maxlength="6"
-            value="${esc(S.code || "DT" + String(Math.floor(Math.random() * 10000)).padStart(4, "0"))}"
-            placeholder="DT0001"
+            type="text"
+            inputmode="numeric"
+            maxlength="10"
+            pattern="[0-9]{10}"
+            value="${esc(S.code || "")}"
+            placeholder="Nhập MSSV gồm 10 chữ số"
+            autocomplete="off"
           >
         </p>
+
 
         <label class="option">
           <input type="checkbox" id="consent">
@@ -94,10 +100,13 @@ function onboarding() {
 
 function register() {
   let c = $("#code").value.toUpperCase().trim();
-  if (!/^[A-Z0-9]{6}$/.test(c)) {
-    $("#formError").textContent = "Mã phải gồm đúng 6 ký tự chữ cái hoặc số.";
+  
+  if (!/^[0-9]{10}$/.test(c)) {
+    $("#formError").textContent =
+      "Vui lòng nhập MSSV gồm đúng 10 chữ số.";
     return;
   }
+
   if (!$("#consent").checked) {
     $("#formError").textContent = "Vui lòng xác nhận đồng ý tham gia.";
     return;
