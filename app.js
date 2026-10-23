@@ -293,9 +293,25 @@ function submitQuiz() {
 function lab() {
   const cases = window.DEEPTRACE_CASES || [];
   const saved =
-    window.__deeptracePracticeAnswers ||
-    (window.__deeptracePracticeAnswers = {});
-  return `<main class="container"><div class="overline">DEEPTRACE AWARENESS LAB</div><h1 class="pagetitle">Phòng thực hành: Kiểm tra kiến thức tình huống</h1><p class="muted">20 tình huống thực tế về nhận diện Deepfake, kiểm chứng thông tin và lựa chọn cách ứng phó an toàn. Chọn một đáp án cho mỗi câu rồi nộp bài để xem điểm và giải thích.</p><div class="bodypanel"><div class="resultgrid"><div class="metric"><strong>${cases.length}</strong><small>Câu hỏi tình huống</small></div><div class="metric"><strong>${Object.keys(saved).length}/${cases.length}</strong><small>Đã trả lời</small></div><div class="metric"><strong>${window.__deeptracePracticeScore ?? "—"}</strong><small>Điểm gần nhất / ${cases.length}</small></div></div>${cases.map((q, i) => `<div class="question"><h3>Câu ${i + 1}. ${esc(q[0])}</h3>${q[1].map((a, j) => `<label class="option"><input type="radio" name="practice${i}" value="${j}" ${saved[i] === j ? "checked" : ""} onchange="window.__deeptracePracticeAnswers[${i}]=${j}"> ${String.fromCharCode(65 + j)}. ${esc(a)}</label>`).join("")}${window.__deeptracePracticeSubmitted ? `<div class="notice ${saved[i] === q[2] ? "" : "warn"}"><b>${saved[i] === q[2] ? "✓ Đáp án đúng" : "Đáp án đúng: " + String.fromCharCode(65 + q[2])}</b><br>${esc(q[3])}</div>` : ""}</div>`).join("")}<div class="quizfooter"><button class="secondary" onclick="window.__deeptracePracticeAnswers={};window.__deeptracePracticeSubmitted=false;window.__deeptracePracticeScore=null;go('lab')">Làm lại từ đầu</button><button class="primary" onclick="submitPracticeSet()">Nộp bài và xem kết quả →</button></div>${window.__deeptracePracticeSubmitted ? `<div class="takeaway"><b>Kết quả:</b> ${window.__deeptracePracticeScore}/${cases.length} câu đúng (${Math.round((window.__deeptracePracticeScore / cases.length) * 100)}%). Xem phần giải thích ngay dưới từng câu để củng cố kiến thức.</div>` : ""}</div><div class="bodypanel" style="margin-top:20px"><div class="overline">QUY TẮC AN TOÀN</div><h2>Dừng – Xác minh – Hành động</h2><p>Khi gặp nội dung nghi là Deepfake, không vội chia sẻ, chuyển tiền hoặc cung cấp dữ liệu cá nhân. Hãy kiểm tra nguồn, bối cảnh và đối chiếu bằng chứng độc lập trước khi kết luận.</p><button class="secondary" onclick="go('results')">Xem kết quả học tập →</button></div></main>`;
+  window.__deeptracePracticeAnswers ||
+  (window.__deeptracePracticeAnswers = {
+    ...(S.practice?.answers || {})
+  });
+
+if (window.__deeptracePracticeSubmitted === undefined) {
+  window.__deeptracePracticeSubmitted =
+    typeof S.practice === "object" &&
+    S.practice !== null;
+}
+
+if (
+  window.__deeptracePracticeScore == null &&
+  typeof S.practice === "object" &&
+  S.practice !== null
+) {
+  window.__deeptracePracticeScore = S.practice.score;
+};
+  return `<main class="container"><div class="overline">DEEPTRACE AWARENESS LAB</div><h1 class="pagetitle">Phòng thực hành: Kiểm tra kiến thức tình huống</h1><p class="muted">20 tình huống thực tế về nhận diện Deepfake, kiểm chứng thông tin và lựa chọn cách ứng phó an toàn. Chọn một đáp án cho mỗi câu rồi nộp bài để xem điểm và giải thích.</p><div class="bodypanel"><div class="resultgrid"><div class="metric"><strong>${cases.length}</strong><small>Câu hỏi tình huống</small></div><div class="metric"><strong>${Object.keys(saved).length}/${cases.length}</strong><small>Đã trả lời</small></div><div class="metric"><strong>${window.__deeptracePracticeScore ?? "—"}</strong><small>Điểm gần nhất / ${cases.length}</small></div></div>${cases.map((q, i) => `<div class="question"><h3>Câu ${i + 1}. ${esc(q[0])}</h3>${q[1].map((a, j) => `<label class="option"><input type="radio" name="practice${i}" value="${j}" ${saved[i] === j ? "checked" : ""} onchange="window.__deeptracePracticeAnswers[${i}]=${j}"> ${String.fromCharCode(65 + j)}. ${esc(a)}</label>`).join("")}${window.__deeptracePracticeSubmitted ? `<div class="notice ${saved[i] === q[2] ? "" : "warn"}"><b>${saved[i] === q[2] ? "✓ Đáp án đúng" : "Đáp án đúng: " + String.fromCharCode(65 + q[2])}</b><br>${esc(q[3])}</div>` : ""}</div>`).join("")}<div class="quizfooter"><button class="secondary" onclick="window.__deeptracePracticeAnswers={};window.__deeptracePracticeSubmitted=false;window.__deeptracePracticeScore=null;S.practice=null;save();go('lab')">Làm lại từ đầu</button><button class="primary" onclick="submitPracticeSet()">Nộp bài và xem kết quả →</button></div>${window.__deeptracePracticeSubmitted ? `<div class="takeaway"><b>Kết quả:</b> ${window.__deeptracePracticeScore}/${cases.length} câu đúng (${Math.round((window.__deeptracePracticeScore / cases.length) * 100)}%). Xem phần giải thích ngay dưới từng câu để củng cố kiến thức.</div>` : ""}</div><div class="bodypanel" style="margin-top:20px"><div class="overline">QUY TẮC AN TOÀN</div><h2>Dừng – Xác minh – Hành động</h2><p>Khi gặp nội dung nghi là Deepfake, không vội chia sẻ, chuyển tiền hoặc cung cấp dữ liệu cá nhân. Hãy kiểm tra nguồn, bối cảnh và đối chiếu bằng chứng độc lập trước khi kết luận.</p><button class="secondary" onclick="go('results')">Xem kết quả học tập →</button></div></main>`;
 }
 function submitPracticeSet() {
   const cases = window.DEEPTRACE_CASES || [],
@@ -309,14 +325,18 @@ function submitPracticeSet() {
     render();
     return;
   }
-  window.__deeptracePracticeScore = cases.reduce(
-    (n, q, i) => n + (saved[i] === q[2] ? 1 : 0),
-    0,
-  );
   window.__deeptracePracticeSubmitted = true;
-  S.practice = (S.practice || 0) + 1;
-  save();
-  render();
+
+// Lưu kết quả phòng thực hành
+S.practice = {
+  score: window.__deeptracePracticeScore,
+  total: cases.length,
+  answers: { ...saved },
+  submittedAt: new Date().toISOString()
+};
+
+save();
+render();
 }
 
 
@@ -381,8 +401,124 @@ function results() {
         `).join("")}
       </div>
 
-      <div class="actions">
-        <button class="primary" onclick="go('dashboard')">
+             <div class="bodypanel" style="margin-top:20px">
+
+         <div class="overline">PHÒNG THỰC HÀNH</div>
+
+         <h2>Kết quả kiểm tra kiến thức tình huống</h2>
+
+         ${
+           S.practice &&
+           typeof S.practice === "object"
+             ? `
+               <div class="resultgrid">
+
+                 <div class="metric">
+                   <strong>
+                     ${S.practice.score}/${S.practice.total}
+                   </strong>
+                   <small>Số câu trả lời đúng</small>
+                 </div>
+
+                 <div class="metric">
+                   <strong>
+                     ${Math.round(
+                       S.practice.score /
+                       S.practice.total * 100
+                     )}%
+                   </strong>
+                   <small>Tỷ lệ trả lời đúng</small>
+                 </div>
+
+                 <div class="metric">
+                   <strong>
+                     ${S.practice.total - S.practice.score}
+                   </strong>
+                   <small>Số câu chưa đúng</small>
+                 </div>
+
+               </div>
+
+               <details style="margin-top:20px">
+                 <summary style="cursor:pointer;font-weight:bold">
+                   Xem lại đáp án 20 câu tình huống
+                 </summary>
+
+                 ${(window.DEEPTRACE_CASES || []).map(
+                   (q, i) => {
+
+                     const selected =
+                       S.practice.answers?.[i];
+
+                     const correct = q[2];
+
+                     const isCorrect =
+                       selected === correct;
+
+                     return `
+                       <div class="question">
+
+                         <h3>
+                           Câu ${i + 1}. ${esc(q[0])}
+                         </h3>
+
+                         <p>
+                           <b>Đã chọn:</b>
+                           ${
+                             selected !== undefined
+                               ? esc(q[1][selected])
+                               : "Chưa trả lời"
+                           }
+                         </p>
+
+                         <p>
+                           <b>Đáp án đúng:</b>
+                           ${esc(q[1][correct])}
+                         </p>
+
+                         <p>
+                           <b>Kết quả:</b>
+                           ${
+                             isCorrect
+                               ? "✅ Chính xác"
+                               : "❌ Chưa chính xác"
+                           }
+                         </p>
+
+                         <div class="notice">
+                           <b>Giải thích:</b>
+                           ${esc(q[3])}
+                         </div>
+
+                       </div>
+                     `;
+                   }
+                 ).join("")}
+
+               </details>
+             `
+             : `
+               <div class="notice">
+                 Bạn chưa hoàn thành Phòng thực hành.
+                 Hãy thực hiện bài kiểm tra 20 câu
+                 để xem kết quả tại đây.
+
+                 <div style="margin-top:15px">
+                   <button
+                     class="secondary"
+                     onclick="go('lab')"
+                   >
+                     Đến Phòng thực hành →
+                   </button>
+                 </div>
+               </div>
+             `
+         }
+
+       </div>
+
+       <div class="actions">
+         <button class="primary" onclick="go('dashboard')">
           Bảng điều khiển
         </button>
 
@@ -407,6 +543,7 @@ function downloadData() {
             participant: S.code,
             lessons: S.lessons,
             quizzes: S.quizzes,
+            practice: S.practice,
           },
           null,
           2,
